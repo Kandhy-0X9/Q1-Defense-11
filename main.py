@@ -23,7 +23,6 @@ def add_students(students_data):
     
     # 4. Commit the changes and close the connection
     conn.commit()
-    conn.close()
     print("Database created and data inserted successfully!")
 
 # Collect input from the user
@@ -36,3 +35,4 @@ data_to_insert.append((name, age, grade))
 
 # Run the function
 add_students(data_to_insert)
+
