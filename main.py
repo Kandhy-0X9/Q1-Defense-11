@@ -1,43 +1,178 @@
+
 import sqlite3
+import os
 
-data_to_insert = []
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
-def add_students(students_data):
-    # 1. Connect to a database file
-    conn = sqlite3.connect('students.db')
+def connect_db():# connects to the db every time its called
+    conn = sqlite3.connect("students.db")
     cursor = conn.cursor()
-    
-    # 2. Create the table
-    cursor.execute('''
+
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS students (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             age INTEGER,
             grade TEXT
-        );
-    ''')
-    
-    # 3. Insert the data safely using executemany
-    cursor.executemany('''
-        INSERT INTO students (name, age, grade) 
-        VALUES (?, ?, ?);
-    ''', students_data)
-    
-    # 4. Commit the changes and close the connection
+        )
+    """)
     conn.commit()
-    print("Database created and data inserted successfully!")
+    return conn
 
-# Collect input from the user
+
 def add_student():
+    clear_screen()
     name = input("What is your name: ").strip().title()
-    age = int(input("What is your age: "))
+    try:
+        age = int(input("What is your age: "))
+        if age < 0:
+            print("Age cannot be negative.")
+            return
+    except ValueError:
+        print("Please enter a valid number for age.")
+        return
     grade = input("What is your grade (A, B, C...): ").strip().upper()
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO students (name, age, grade)
+        VALUES (?, ?, ?)
+    """, (name, age, grade))
+    conn.commit()
+    conn.close()
+    print("Student added successfully!")
 
-    data_to_insert.append((name, age, grade))
 
-def menu():
-    choice = input("What do you want to do")
+def display_students():
+    clear_screen()
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM students")
+    students = cursor.fetchall()
+    if students:
+        for student in students:
+            print(student)
+    else:
+        print("No students found.")
+    conn.close()
 
 
+def update_grade():
+    clear_screen()
+    student_id = input("Enter the student ID: ").strip()
+    new_grade = input("Enter the new grade: ").strip().upper()
+    try:
+        student_id = int(student_id)
+    except ValueError:
+        print("Please enter a valid student ID.")
+        return
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        UPDATE students
+        SET grade = ?
+        WHERE id = ?
+    """, (new_grade, student_id))
+    conn.commit()
+    if cursor.rowcount > 0:
+        print("Grade updated successfully!")
+    else:
+        print("Student ID not found.")
+    conn.close()
 
-print("---Student Database---")
+
+def search_name():
+    clear_screen()
+    name = input("Enter the student's name: ").strip()
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT * FROM students
+        WHERE name LIKE ?
+    """, (f"%{name}%",))
+    students = cursor.fetchall()
+    if students:
+        for student in students:
+            print(student)
+    else:
+        print("No matching students found.")
+    conn.close()
+
+
+def show_by_grade():
+    clear_screen()
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT grade, COUNT(*)
+        FROM students
+        GROUP BY grade
+        ORDER BY grade
+    """)
+    results = cursor.fetchall()
+    if results:
+        for grade, count in results:
+            print(f"Grade {grade}: {count} student(s)")
+    else:
+        print("No students found.")
+    conn.close()
+
+
+def delete_student():
+    clear_screen()
+    try:
+        student_id = int(input("Enter the student ID to delete: "))
+    except ValueError:
+        print("Please enter a valid student ID.")
+        return
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        DELETE FROM students
+        WHERE id = ?
+    """, (student_id,))
+    conn.commit()
+    if cursor.rowcount > 0:
+        print("Student deleted successfully!")
+    else:
+        print("Student ID not found.")
+    conn.close()
+
+
+def main():
+    clear_screen()
+    while True:
+        choice = input(
+            "\nOptions:\n"
+            "  add     => Add a student\n"
+            "  display => Display all students\n"
+            "  update  => Update a student's grade\n"
+            "  search  => Search for a student by name\n"
+            "  show    => Count students in each grade\n"
+            "  delete  => Delete a student\n"
+            "  exit    => Exit the program\n"
+            "What is your choice: "
+        ).strip().lower()
+
+        if choice == "add":
+            add_student()
+        elif choice == "display":
+            display_students()
+        elif choice == "update":
+            update_grade()
+        elif choice == "search":
+            search_name()
+        elif choice == "show":
+            show_by_grade()
+        elif choice == "delete":
+            delete_student()
+        elif choice == "exit":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+
+if __name__ == "__main__":
+    main()

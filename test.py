@@ -2,30 +2,7 @@ choice = input("Options:\n" \
 "   add => Add a student.\n" \
 "   display => Display all students.\n" \
 "   update => Update a student's grade.\n"\
-"   delete => "
+"   search => Search for student by name.\n"\
+"   show => Show the number of studnets in each grade.\n"\
+"   delete => Delete a student.\n"\
 "What is your choice:")
-
-
-
-
-Add a student.
-
-
-
-[x] Display all students.
-
-
-
-[x] Search for a student by name.
-
-
-
-[x] Update a student's grade.
-
-
-
-[x] Delete a student.
-
-
-
-[x] Show the number of students in each grade.
