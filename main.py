@@ -24,15 +24,21 @@ def connect_db():# connects to the db every time its called
 def add_student():
     clear_screen()
     name = input("What is your name: ").strip().title()
+    if not name:
+        print("Name cannot be empty")
+        return
     try:
         age = int(input("What is your age: "))
-        if age < 0:
-            print("Age cannot be negative.")
+        if not 1 <= age <=120:
+            print("Age cannot be less than 1 or greater than 120.")
             return
     except ValueError:
         print("Please enter a valid number for age.")
         return
     grade = input("What is your grade (A, B, C...): ").strip().upper()
+    if grade not in ("A", "B", "C", "D", "F"):
+        print("Please enter a valid grade.")
+        return
     conn = connect_db()
     cursor = conn.cursor()
     cursor.execute("""
@@ -138,7 +144,7 @@ def delete_student():
     else:
         print("Student ID not found.")
     conn.close()
-
+    
 
 def main():
     clear_screen()
