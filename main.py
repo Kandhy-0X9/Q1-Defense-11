@@ -1,5 +1,7 @@
 import sqlite3
 
+data_to_insert = []
+
 def add_students(students_data):
     # 1. Connect to a database file
     conn = sqlite3.connect('students.db')
@@ -26,13 +28,16 @@ def add_students(students_data):
     print("Database created and data inserted successfully!")
 
 # Collect input from the user
-data_to_insert = []
-name = input("What is your name: ").strip().title()  # .title() keeps capitalization clean
-age = int(input("What is your age: "))
-grade = input("What is your grade (A, B, C...): ").strip().upper()
+def add_student():
+    name = input("What is your name: ").strip().title()
+    age = int(input("What is your age: "))
+    grade = input("What is your grade (A, B, C...): ").strip().upper()
 
-data_to_insert.append((name, age, grade))
+    data_to_insert.append((name, age, grade))
 
-# Run the function
-add_students(data_to_insert)
+def menu():
+    choice = input("What do you want to do")
 
+
+
+print("---Student Database---")
