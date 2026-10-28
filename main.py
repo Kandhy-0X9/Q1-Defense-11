@@ -36,7 +36,7 @@ def add_student():
         print("Please enter a valid number for age.")
         return
     grade = input("What is your grade (A, B, C...): ").strip().upper()
-    if grade not in ("A", "B", "C", "D", "F"):
+    if grade not in ("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"):
         print("Please enter a valid grade.")
         return
     conn = connect_db()
