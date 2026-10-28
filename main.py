@@ -68,6 +68,9 @@ def update_grade():
     clear_screen()
     student_id = input("Enter the student ID: ").strip()
     new_grade = input("Enter the new grade: ").strip().upper()
+    if new_grade not in ("A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"):
+        print("Please enter a valid grade.")
+        return
     try:
         student_id = int(student_id)
     except ValueError:
